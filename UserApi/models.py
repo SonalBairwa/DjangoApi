@@ -21,14 +21,12 @@ class UserDetail(models.Model):
 
 
 class CodeDetail(models.Model):
-    x = models.CharField(max_length=100, null=False)
-    code = models.CharField(max_length=100, null=False, unique=True)
+    code = models.CharField(max_length=14, null=False, unique=True)
     count = models.IntegerField(default=0)
     status = models.CharField(max_length=10, default="unused", null=False)
 
     def as_json(self):
         return dict(
-            x=self.x,
             code=self.code,
             count=self.count,
             status=self.status)
@@ -36,4 +34,5 @@ class CodeDetail(models.Model):
     @staticmethod
     def generate_uniq_code():
         return ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(14))
+
 
