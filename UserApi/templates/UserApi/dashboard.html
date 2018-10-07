@@ -6,19 +6,56 @@
         <meta charset="UTF-8">
         <title>Title</title>
         {% if user_type == "true" %}
-        <a class="btn btn-default login-btn" href="code_view"> Generate Code</a><br>
-        <a class="btn btn-default login-btn" href="generate_csv"> Create CSV</a><br>
+            <a class="btn btn-default login-btn" style="float: right" href="code_view"> Generate Code</a>
+            <a class="btn btn-default login-btn" style="float: right; " href="generate_csv"> Create CSV</a><br>
         {% endif %}
     </head>
     <body>
-    {% for list in code_list %}
-            <div class="card">
-                <h1>{{ list.code }}</h1>
-                <h1>{{ list.count }}</h1>
-                <h1>{{ list.status }}</h1>
+    <div class="cardList" style="margin-top: 30px">
+        <div class="col-lg-12">
+            <div class="col-lg-6" style="text-align: center;font-size: x-large;">
+                <div class="card">
+                    <div class="col-lg-2">
+                        Code
+                    </div>
+                    <div class="col-lg-2">
+                        Count
+                    </div>
+                    <div class="col-lg-2">
+                        Status
+                    </div>
+                </div>
             </div>
-
-    {% endfor %}
+            <div class="col-lg-6" style="text-align: center;font-size: x-large;">
+                <div class="card">
+                    <div class="col-lg-2">
+                        Code
+                    </div>
+                    <div class="col-lg-2">
+                        Count
+                    </div>
+                    <div class="col-lg-2">
+                        Status
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% for list in code_list %}
+            <div class="col-lg-6">
+                <div class="card">
+                    <div class="col-lg-2">
+                        {{ list.code }}</div>
+                    <div class="col-lg-2">
+                        {{ list.count }}
+                    </div>
+                    <div class="col-lg-2">
+                        {{ list.status }}
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    </div>
     </body>
     </html>
 {% endblock %}
