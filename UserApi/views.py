@@ -1,5 +1,6 @@
 import json
-
+import io
+import numpy as np
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
@@ -49,6 +50,7 @@ def code_view(request):
 
 @csrf_exempt
 def dashboard(request):
+    #print(args)
     code_list = CodeDetail.objects.filter(count__gte=1)
     list_list = []
     for i in code_list:
@@ -67,6 +69,7 @@ def code_used_count(request):
         if CodeDetail.objects.get(code=code) is not None:
             code_detail = CodeDetail.objects.get(code=code)
             code_detail.count = code_detail.count + 1
+            code_detail.status = 'used'
             code_detail.save()
             return HttpResponse(json.dumps({'status': True, 'message': 'API called successfully'}),
                                 content_type='application/json')
@@ -82,9 +85,8 @@ def code_used_count(request):
 
 def login(request):
     if request.method == "POST":
-        user = UserLoginForm(request.POST)
-        data=request.POST
-        email = user.cleaned_data['email']
+        data = request.POST
+        email = request.POST.get('email')
         s = UserDetail.objects.filter(email=email)
         if s.count() == 0:
             return HttpResponse("Enter valid email & password")
@@ -92,13 +94,30 @@ def login(request):
             return HttpResponse("Enter valid email & password")
 
         else:
-             return redirect('/dashboard', {'user_type':s[0].user_type})
+            return redirect('/dashboard')
 
     else:
         user = UserLoginForm()
         return render(request, 'UserApi/login.html', {'user': user})
 
 
-
 def generate_csv(request):
-    return HttpResponse("uyjdsghf")
+    data = CodeDetail.objects.all()
+    list_list = []
+    header = ['Api_url','count', 'status']
+    list_list.append(header)
+    for i in data:
+        value_list = []
+        value_list.append('http://127.0.0.1:8000/code_used_count?code={}'.format(i.code))
+        value_list.append(i.count)
+        value_list.append(i.status)
+
+        list_list.append(value_list)
+
+    np.savetxt("file_name.csv", list_list, delimiter=",", fmt='%s')
+
+    # return HttpResponse("csv file downloaded")
+    with open('file_name.csv', 'rb') as myfile:
+        response = HttpResponse(myfile, content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename=file_name.csv'
+        return response

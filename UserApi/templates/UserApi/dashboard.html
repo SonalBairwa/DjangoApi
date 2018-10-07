@@ -5,57 +5,39 @@
     <head>
         <meta charset="UTF-8">
         <title>Title</title>
+    <div class="buutons" style="margin-top: 1%;margin-right:8rem">
         {% if user_type == "true" %}
-            <a class="btn btn-default login-btn" style="float: right" href="code_view"> Generate Code</a>
-            <a class="btn btn-default login-btn" style="float: right; " href="generate_csv"> Create CSV</a><br>
+            <a class="btn btn-default login-btn" style="float: right; margin-left:10px" href="code_view"> Generate
+                Code</a>
+            <a class="btn btn-default login-btn" style="float: right; margin-left:10px; " href="generate_csv"> Create
+                CSV</a><br>
         {% endif %}
+    </div>
     </head>
     <body>
-    <div class="cardList" style="margin-top: 30px">
-        <div class="col-lg-12">
-            <div class="col-lg-6" style="text-align: center;font-size: x-large;">
-                <div class="card">
-                    <div class="col-lg-2">
-                        Code
-                    </div>
-                    <div class="col-lg-2">
-                        Count
-                    </div>
-                    <div class="col-lg-2">
-                        Status
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-6" style="text-align: center;font-size: x-large;">
-                <div class="card">
-                    <div class="col-lg-2">
-                        Code
-                    </div>
-                    <div class="col-lg-2">
-                        Count
-                    </div>
-                    <div class="col-lg-2">
-                        Status
-                    </div>
-                </div>
-            </div>
+        <div class="col-md-10" style="margin-left: 8%; margin-top: 2%">
+        <table class="table  table-bordered" style="border-color: #1f2021">
+            <thead class="thead-dark" style="background-color: #1f2021" >
+            <tr>
+                <th scope="col" style="text-align: center; color: white">Code</th>
+                <th scope="col" style="text-align: center; color: white">Count</th>
+                <th scope="col" style="text-align: center; color: white">Used</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for list in code_list %}
+                <tr style="background-color: #bbc1c1">
+
+                    <td>{{ list.code }}</td>
+                    <td>  {{ list.count }}</td>
+                    <td>{{ list.status }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+
+        </table>
         </div>
-        {% for list in code_list %}
-            <div class="col-lg-6">
-                <div class="card">
-                    <div class="col-lg-2">
-                        {{ list.code }}</div>
-                    <div class="col-lg-2">
-                        {{ list.count }}
-                    </div>
-                    <div class="col-lg-2">
-                        {{ list.status }}
-                    </div>
-                </div>
-            </div>
-        {% endfor %}
-    </div>
-    </div>
+
     </body>
     </html>
 {% endblock %}

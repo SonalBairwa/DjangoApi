@@ -12,7 +12,7 @@
             {% csrf_token %}
             <div class="form-group">
                 <label for="username" class="col-lg-3 control-label">Please input the value of x</label>
-                <div class="col-lg-9"><input type="number" id="x" name="x" class="form-control"
+                <div class="col-lg-9"><input type="number" id="x" name="x" class="form-control" min="45000"
                                               onfocus="if(this.value  == 'User Name'){ this.value = ''; } " onblur="if(this.value == '')
         { this.value = 'User Name'; } " required><br>
                 </div>
