@@ -19,6 +19,9 @@ class UserDetail(models.Model):
             user_type=self.user_type,
             password=self.password)
 
+    def __str__(self):
+        return self.email
+
 
 class CodeDetail(models.Model):
     code = models.CharField(max_length=14, null=False, unique=True)
@@ -30,6 +33,9 @@ class CodeDetail(models.Model):
             code=self.code,
             count=self.count,
             status=self.status)
+
+    def __str__(self):
+        return self.code
 
     @staticmethod
     def generate_uniq_code():

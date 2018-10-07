@@ -1,0 +1,26 @@
+{% extends 'UserApi/base.html' %}
+{% load staticfiles %}
+{% block content %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<form name="form"  method="POST">
+        <fieldset>
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="username" class="col-lg-3 control-label">Please input the value of x</label>
+                <div class="col-lg-9"><input type="number" id="x" name="x" class="form-control"
+                                              onfocus="if(this.value  == 'User Name'){ this.value = ''; } " onblur="if(this.value == '')
+        { this.value = 'User Name'; } " required><br>
+                </div>
+            </div>
+            <button class="btn btn-default login-btn" type="submit">submit</button>
+        </fieldset>
+    </form>
+
+</body>
+</html>
+{% endblock %}

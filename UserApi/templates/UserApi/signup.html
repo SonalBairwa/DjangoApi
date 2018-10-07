@@ -1,0 +1,21 @@
+{% extends 'UserApi/base.html' %}
+{% load staticfiles %}
+{% block content %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div class="datamining">
+        <h2 class="subhead">create account</h2></br>
+        <!--<form id="user_form" method="post" action="professor_list">-->
+        <form method="POST" class="post-form">
+            {% csrf_token %}
+            {{ user_profile.as_p }}
+            <button type="submit" class="save btn btn-default">Submit</button>
+        </form>
+    </div>
+</body>
+</html>
+{% endblock %}
