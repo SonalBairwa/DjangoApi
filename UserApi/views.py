@@ -1,6 +1,7 @@
 import json
 import io
 import numpy as np
+from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
@@ -49,8 +50,7 @@ def code_view(request):
 
 
 @csrf_exempt
-def dashboard(request):
-    #print(args)
+def dashboard(request, user_type):
     code_list = CodeDetail.objects.filter(count__gte=1)
     list_list = []
     for i in code_list:
@@ -59,7 +59,7 @@ def dashboard(request):
         val_dict['count'] = i.count
         val_dict['status'] = i.status
         list_list.append(val_dict)
-    return render(request, 'UserApi/dashboard.html', {'code_list': list_list, 'user_type': "true"})
+    return render( request,'UserApi/dashboard.html', {'code_list': list_list, 'user_type': user_type})
 
 
 @csrf_exempt
@@ -88,13 +88,19 @@ def login(request):
         data = request.POST
         email = request.POST.get('email')
         s = UserDetail.objects.filter(email=email)
+        print(s[0])
         if s.count() == 0:
             return HttpResponse("Enter valid email & password")
         if s[0].password != data['password']:
             return HttpResponse("Enter valid email & password")
 
         else:
-            return redirect('/dashboard')
+
+            user_data = UserDetail.objects.all()
+            for user in user_data:
+                if (user.email == email):
+                    user_type = user.user_type
+            return dashboard(request,user_type)
 
     else:
         user = UserLoginForm()
