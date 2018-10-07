@@ -17,9 +17,10 @@ class UserLoginForm(forms.Form):
 
 
 class UserProfileForm(forms.ModelForm):
+    password = forms.CharField(widget=forms.PasswordInput())
     class Meta:
         model = UserDetail
-        fields = '__all__'
+        fields = ('name', 'email', 'password')
 
 
 class CodeForm(forms.ModelForm):

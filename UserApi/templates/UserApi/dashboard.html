@@ -5,6 +5,10 @@
     <head>
         <meta charset="UTF-8">
         <title>Title</title>
+        {% if user_type == "true" %}
+        <a class="btn btn-default login-btn" href="code_view"> Generate Code</a><br>
+        <a class="btn btn-default login-btn" href="generate_csv"> Create CSV</a><br>
+        {% endif %}
     </head>
     <body>
     {% for list in code_list %}
@@ -13,6 +17,7 @@
                 <h1>{{ list.count }}</h1>
                 <h1>{{ list.status }}</h1>
             </div>
+
     {% endfor %}
     </body>
     </html>

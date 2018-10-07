@@ -15,12 +15,8 @@ def user_register(request):
     context = RequestContext(request)
     if request.method == "POST":
         upf = UserProfileForm(data=request.POST)
-        if upf.is_valid():
-            upf.save()
-            return redirect('/')
-        else:
-            upf.errors
-            return HttpResponse("invalid data")
+        upf.save()
+        return redirect('/')
     else:
         user_profile = UserProfileForm()
         return render(request, 'UserApi/signup.html', {'user_profile': user_profile}, context)
@@ -31,12 +27,8 @@ def admin_register(request):
     context = RequestContext(request)
     if request.method == "POST":
         upf = UserProfileForm(data=request.POST)
-        if upf.is_valid():
-            upf.save()
-            return redirect('/')
-        else:
-            upf.errors
-            return HttpResponse("invalid data")
+        upf.save()
+        return redirect('/')
     else:
         user_profile = UserProfileForm()
         return render(request, 'UserApi/signup.html', {'user_profile': user_profile}, context)
@@ -65,18 +57,18 @@ def dashboard(request):
         val_dict['count'] = i.count
         val_dict['status'] = i.status
         list_list.append(val_dict)
-    return render(request, 'UserApi/dashboard.html', {'code_list': list_list})
+    return render(request, 'UserApi/dashboard.html', {'code_list': list_list, 'user_type': "true"})
 
 
 @csrf_exempt
 def code_used_count(request):
     try:
         code = request.GET.get('code')
-        if CodeDetail.objects.get(code=code):
+        if CodeDetail.objects.get(code=code) is not None:
             code_detail = CodeDetail.objects.get(code=code)
             code_detail.count = code_detail.count + 1
             code_detail.save()
-            return HttpResponse(json.dumps({'status': True, 'message': 'data saved successfully'}),
+            return HttpResponse(json.dumps({'status': True, 'message': 'API called successfully'}),
                                 content_type='application/json')
         else:
             return HttpResponse(
@@ -91,20 +83,22 @@ def code_used_count(request):
 def login(request):
     if request.method == "POST":
         user = UserLoginForm(request.POST)
-        data = request.POST
-        # user = user_profile.objects.get(username=request.POST.get('username'))
-        if user.is_valid():
-            username = user.cleaned_data['email']
-            s = UserDetail.objects.filter(username=username)
-            if s.count() == 0:
-                return HttpResponse("Enter valid email & password")
-            if s[0].password != data['password']:
-                return HttpResponse("Enter valid email & password")
-            return redirect('events')
+        data=request.POST
+        email = user.cleaned_data['email']
+        s = UserDetail.objects.filter(email=email)
+        if s.count() == 0:
+            return HttpResponse("Enter valid email & password")
+        if s[0].password != data['password']:
+            return HttpResponse("Enter valid email & password")
+
         else:
-            str = "invalid email or password"
-            return redirect('/code_view')
+             return redirect('/dashboard', {'user_type':s[0].user_type})
 
     else:
         user = UserLoginForm()
         return render(request, 'UserApi/login.html', {'user': user})
+
+
+
+def generate_csv(request):
+    return HttpResponse("uyjdsghf")
