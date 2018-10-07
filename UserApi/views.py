@@ -1,7 +1,6 @@
 import json
-import io
+
 import numpy as np
-from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
@@ -51,15 +50,21 @@ def code_view(request):
 
 @csrf_exempt
 def dashboard(request, user_type):
-    code_list = CodeDetail.objects.filter(count__gte=1)
-    list_list = []
-    for i in code_list:
-        val_dict = {}
-        val_dict['code'] = i.code
-        val_dict['count'] = i.count
-        val_dict['status'] = i.status
-        list_list.append(val_dict)
-    return render( request,'UserApi/dashboard.html', {'code_list': list_list, 'user_type': user_type})
+    try:
+        if user_type is True or user_type is False:
+            code_list = CodeDetail.objects.filter(count__gte=1)
+            list_list = []
+            for i in code_list:
+                val_dict = {}
+                val_dict['code'] = i.code
+                val_dict['count'] = i.count
+                val_dict['status'] = i.status
+                list_list.append(val_dict)
+            return render(request, 'UserApi/dashboard.html', {'code_list': list_list, 'user_type': user_type})
+        else:
+            return HttpResponse('please login to access the page')
+    except:
+        HttpResponse('please login')
 
 
 @csrf_exempt
@@ -86,21 +91,24 @@ def code_used_count(request):
 def login(request):
     if request.method == "POST":
         data = request.POST
-        email = request.POST.get('email')
-        s = UserDetail.objects.filter(email=email)
-        print(s[0])
-        if s.count() == 0:
-            return HttpResponse("Enter valid email & password")
-        if s[0].password != data['password']:
-            return HttpResponse("Enter valid email & password")
+        try:
+            email = request.POST.get('email')
+            s = UserDetail.objects.filter(email=email)
+            if s.count() == 0:
+                return HttpResponse("Enter valid email & password")
+            if s[0].password != data['password']:
+                return HttpResponse("Enter valid email & password")
 
-        else:
+            else:
+                user_data = UserDetail.objects.all()
+                user_type = ''
+                for user in user_data:
+                    if user.email == email:
+                        user_type = user.user_type
+                return dashboard(request, user_type)
+        except ObjectDoesNotExist:
+            return HttpResponse("you are not registered with us")
 
-            user_data = UserDetail.objects.all()
-            for user in user_data:
-                if (user.email == email):
-                    user_type = user.user_type
-            return dashboard(request,user_type)
 
     else:
         user = UserLoginForm()
@@ -110,7 +118,7 @@ def login(request):
 def generate_csv(request):
     data = CodeDetail.objects.all()
     list_list = []
-    header = ['Api_url','count', 'status']
+    header = ['Api_url', 'count', 'status']
     list_list.append(header)
     for i in data:
         value_list = []
