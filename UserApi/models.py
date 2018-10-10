@@ -1,4 +1,4 @@
-import random, string
+from django.utils.crypto import get_random_string
 
 
 from django.db import models
@@ -39,9 +39,6 @@ class CodeDetail(models.Model):
 
     @staticmethod
     def generate_uniq_code():
-
-        x = ''.join(random.choices(string.ascii_letters + string.digits, k=5))
-        return x
-        #return ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(14))
-
+        cde = get_random_string(length=14, allowed_chars='abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789')
+        return cde
 
