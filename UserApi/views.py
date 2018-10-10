@@ -38,20 +38,30 @@ def admin_register(request):
 @csrf_exempt
 def code_view(request):
     if request.method == "POST":
+        code_details = CodeDetail.objects.all()
+        code_list = [code_details[i].code for i in range(len(code_details))]
         x = int(request.POST.get('x'))
+        user_type = 'True'
+        data_list = []
         for i in range(x):
-            code_detail = CodeDetail()
-            code_detail.code = CodeDetail.generate_uniq_code()
-            code_detail.save()
-        return redirect('/dashboard')
+            unique_code = CodeDetail.generate_uniq_code()
+            if unique_code not in code_list:
+                code_list.append(unique_code)
+                data_list.append(CodeDetail(code=unique_code))
+            else:
+                i = i - 1
+        CodeDetail.objects.bulk_create(data_list)
+
+        return redirect('/dashboard/user_type/?user_type={}'.format(user_type))
     else:
         return render(request, 'UserApi/homepage.html')
 
 
 @csrf_exempt
 def dashboard(request, user_type):
+    user_type = request.GET.get(user_type)
     try:
-        if user_type is True or user_type is False:
+        if user_type == 'True' or user_type == 'False':
             code_list = CodeDetail.objects.filter(count__gte=1)
             list_list = []
             for i in code_list:
@@ -105,10 +115,9 @@ def login(request):
                 for user in user_data:
                     if user.email == email:
                         user_type = user.user_type
-                return dashboard(request, user_type)
+                return redirect('/dashboard/user_type/?user_type={}'.format(user_type))
         except ObjectDoesNotExist:
             return HttpResponse("you are not registered with us")
-
 
     else:
         user = UserLoginForm()

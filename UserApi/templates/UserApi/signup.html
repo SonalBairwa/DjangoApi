@@ -12,7 +12,7 @@
         <!--<form id="user_form" method="post" action="professor_list">-->
         <form method="POST" class="post-form">
             {% csrf_token %}
-            {{ user_profile.as_p }}
+            {{ user_profile.as_p}}
             <button type="submit" class="save btn btn-default">Submit</button>
         </form>
     Already have a account? <a href="login"> Login</a><br>

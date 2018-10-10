@@ -1,5 +1,5 @@
-import random
-import string
+import random, string
+
 
 from django.db import models
 
@@ -39,6 +39,9 @@ class CodeDetail(models.Model):
 
     @staticmethod
     def generate_uniq_code():
-        return ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(14))
+
+        x = ''.join(random.choices(string.ascii_letters + string.digits, k=5))
+        return x
+        #return ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(14))
 
 
