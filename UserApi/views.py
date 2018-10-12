@@ -7,8 +7,16 @@ from django.shortcuts import redirect, render
 from django.template import RequestContext
 from django.views.decorators.csrf import csrf_exempt
 
+from DjangoApi.settings import ENC_SECRET_KEY
 from UserApi.forms import UserProfileForm, UserLoginForm
 from .models import UserDetail, CodeDetail
+import base64
+
+
+def encrypt(password):
+    password = bytes(password, 'utf-8')
+    password = base64.b64encode(password)
+    return str(password)
 
 
 @csrf_exempt
@@ -16,7 +24,11 @@ def user_register(request):
     context = RequestContext(request)
     if request.method == "POST":
         upf = UserProfileForm(data=request.POST)
-        upf.save()
+        user_detail = UserDetail()
+        user_detail.password = str(encrypt(upf.data['password']))
+        user_detail.name = upf.data['name']
+        user_detail.email = upf.data['email']
+        user_detail.save()
         return redirect('/')
     else:
         user_profile = UserProfileForm()
@@ -38,18 +50,12 @@ def admin_register(request):
 @csrf_exempt
 def code_view(request):
     if request.method == "POST":
-        code_details = CodeDetail.objects.all()
-        code_list = [code_details[i].code for i in range(len(code_details))]
         x = int(request.POST.get('x'))
         user_type = 'True'
         data_list = []
         for i in range(x):
             unique_code = CodeDetail.generate_uniq_code()
-            if unique_code not in code_list:
-                code_list.append(unique_code)
-                data_list.append(CodeDetail(code=unique_code))
-            else:
-                i = i - 1
+            data_list.append(CodeDetail(code=unique_code))
         CodeDetail.objects.bulk_create(data_list)
 
         return redirect('/dashboard/user_type/?user_type={}'.format(user_type))
@@ -104,9 +110,10 @@ def login(request):
         try:
             email = request.POST.get('email')
             s = UserDetail.objects.filter(email=email)
+            print(s[0].password,'utf-8'),encrypt(data['password'])
             if s.count() == 0:
                 return HttpResponse("Enter valid email & password")
-            if s[0].password != data['password']:
+            if s[0].password != encrypt(str(data['password'])):
                 return HttpResponse("Enter valid email & password")
 
             else:
@@ -130,16 +137,11 @@ def generate_csv(request):
     header = ['Api_url', 'count', 'status']
     list_list.append(header)
     for i in data:
-        value_list = []
-        value_list.append('http://127.0.0.1:8000/code_used_count?code={}'.format(i.code))
-        value_list.append(i.count)
-        value_list.append(i.status)
-
+        value_list = ['http://127.0.0.1:8000/code_used_count?code={}'.format(i.code), i.count, i.status]
         list_list.append(value_list)
 
     np.savetxt("file_name.csv", list_list, delimiter=",", fmt='%s')
 
-    # return HttpResponse("csv file downloaded")
     with open('file_name.csv', 'rb') as myfile:
         response = HttpResponse(myfile, content_type='text/csv')
         response['Content-Disposition'] = 'attachment; filename=file_name.csv'

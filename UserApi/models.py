@@ -1,4 +1,4 @@
-from django.utils.crypto import get_random_string
+import time
 
 
 from django.db import models
@@ -39,6 +39,7 @@ class CodeDetail(models.Model):
 
     @staticmethod
     def generate_uniq_code():
-        cde = get_random_string(length=14, allowed_chars='abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789')
-        return cde
-
+        #code = get_random_string(length=14, allowed_chars='abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789')
+        code = time.time() * 100000000
+        code=str(code)[8:22].replace('0',A)
+        return code
